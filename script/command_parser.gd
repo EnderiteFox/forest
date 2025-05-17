@@ -69,7 +69,7 @@ func _parse_string_arg() -> void:
 		return
 		
 	if start_index == current_index:
-		parse_error = "Trying to parse whitespace as token"
+		parse_error = "Internal Error: Trying to parse whitespace as token"
 		return
 		
 	_add_token(command.substr(start_index, current_index - start_index), ArgumentType.STRING)
