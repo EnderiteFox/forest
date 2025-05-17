@@ -30,6 +30,7 @@ static func node_to_string(node: CommandTreeNode) -> String:
 
 ## Finds a command path matching the given tokens
 func get_command_path(tokens: Array[String], token_types: Array[CommandParser.ArgumentType]) -> Array[CommandTreeNode]:
+	self.error = ""
 	if tokens.size() != token_types.size():
 		push_error("Internal Error: token count and token type count is different")
 		return []
@@ -67,3 +68,48 @@ func get_command_path(tokens: Array[String], token_types: Array[CommandParser.Ar
 			return []
 		
 	return path
+	
+	
+func execute_callback(command_path: Array[CommandTreeNode], tokens: Array[String]) -> void:
+	self.error = ""
+	
+	# Get arguments
+	var argument_names: Array[String] = []
+	var arguments: Array[Variant] = []
+	var token_index: int = 0
+	for node in command_path:
+		if not node is CommandTreeArgument:
+			token_index += 1
+			continue
+			
+		argument_names.append(node.argument_name)
+		arguments.append(node.parse_token(tokens[token_index]))
+		token_index += 1
+		
+	print("Argument names: %s" % str(argument_names))
+	print("Argument values: %s" % str(arguments))
+	
+	# Find last command node
+	var inverted_command_path: Array[CommandTreeNode] = command_path.duplicate(true)
+	inverted_command_path.reverse()
+	var command_node: Command = null
+	
+	for node in inverted_command_path:
+		if node is Command:
+			command_node = node
+			break
+			
+	if not command_node:
+		self.error = "No command node in command path"
+		return
+		
+	if not command_node.command_callbacks.has(argument_names):
+		self.error = "No function matches arguments %s" % ", ".join(argument_names)
+		return
+
+	var custom_callback: CustomCallback = command_node.command_callbacks[argument_names]
+	var node: Node = command_node.get_node(custom_callback.node)
+	if not node:
+		self.error = "Could not find node at path %s from node %s" % [custom_callback.node, command_node.get_name()]
+	node.callv(custom_callback.callback, arguments)
+	
