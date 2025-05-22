@@ -1,0 +1,111 @@
+[gd_scene load_steps=10 format=3 uid="uid://bajd8kfcs203a"]
+
+[ext_resource type="Script" uid="uid://dqwdxxtw4ef1k" path="res://addons/forest/command_tree/command_tree.gd" id="1_ofntp"]
+[ext_resource type="Script" uid="uid://cehwf7xbnc5c3" path="res://addons/forest/commands/command.gd" id="2_7l7ml"]
+[ext_resource type="Script" uid="uid://n3ogqpcoklyp" path="res://addons/forest/commands/arguments/int_argument.gd" id="3_bgqh2"]
+[ext_resource type="Script" uid="uid://ds2t4tqqrl4g0" path="res://addons/forest/commands/arguments/enum_argument.gd" id="4_6bbis"]
+[ext_resource type="Script" uid="uid://8o4qdelg1657" path="res://addons/forest/commands/arguments/float_argument.gd" id="5_6bbis"]
+[ext_resource type="Script" uid="uid://um8b815w3c20" path="res://addons/forest/commands/arguments/string_argument.gd" id="6_hg5vf"]
+[ext_resource type="Script" uid="uid://dq5heemyyybie" path="res://addons/forest/commands/arguments/json_argument.gd" id="7_5v886"]
+[ext_resource type="Script" uid="uid://gsppnmm8soku" path="res://addons/forest/commands/arguments/keyword_argument.gd" id="8_5v886"]
+[ext_resource type="Script" uid="uid://4b5wbero8jbr" path="res://addons/forest/commands/arguments/bool_argument.gd" id="9_2aqoy"]
+
+[node name="Root" type="Node"]
+script = ExtResource("1_ofntp")
+metadata/_custom_type_script = "uid://dqwdxxtw4ef1k"
+
+[node name="Keyword" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "keyword"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Only" type="Node" parent="Keyword"]
+script = ExtResource("2_7l7ml")
+command_name = "only"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Cmd" type="Node" parent="Keyword/Only"]
+script = ExtResource("2_7l7ml")
+command_name = "cmd"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Command" type="Node" parent="Keyword/Only"]
+script = ExtResource("2_7l7ml")
+command_name = "command"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Time" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "time"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Set" type="Node" parent="Time"]
+script = ExtResource("2_7l7ml")
+command_name = "set"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="TimeInTicks" type="Node" parent="Time/Set"]
+script = ExtResource("3_bgqh2")
+argument_name = "time_in_ticks"
+metadata/_custom_type_script = "uid://n3ogqpcoklyp"
+
+[node name="TimeOfDay" type="Node" parent="Time/Set"]
+script = ExtResource("4_6bbis")
+possible_values = Array[String](["day", "night", "noon", "midnight"])
+argument_name = "time_of_day"
+metadata/_custom_type_script = "uid://ds2t4tqqrl4g0"
+
+[node name="Add" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "add"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Num1" type="Node" parent="Add"]
+script = ExtResource("5_6bbis")
+argument_name = "num1"
+metadata/_custom_type_script = "uid://8o4qdelg1657"
+
+[node name="Num2" type="Node" parent="Add/Num1"]
+script = ExtResource("5_6bbis")
+argument_name = "num2"
+metadata/_custom_type_script = "uid://8o4qdelg1657"
+
+[node name="Print" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "print"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Text" type="Node" parent="Print"]
+script = ExtResource("6_hg5vf")
+argument_name = "text"
+metadata/_custom_type_script = "uid://um8b815w3c20"
+
+[node name="Json" type="Node" parent="Print"]
+script = ExtResource("7_5v886")
+argument_name = "json"
+metadata/_custom_type_script = "uid://dq5heemyyybie"
+
+[node name="Ambiguous" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "ambiguous"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Keyword1" type="Node" parent="Ambiguous"]
+script = ExtResource("8_5v886")
+argument_name = "keyword1"
+metadata/_custom_type_script = "uid://gsppnmm8soku"
+
+[node name="Keyword2" type="Node" parent="Ambiguous"]
+script = ExtResource("8_5v886")
+argument_name = "keyword2"
+metadata/_custom_type_script = "uid://gsppnmm8soku"
+
+[node name="SetBool" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "set_bool"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Bool" type="Node" parent="SetBool"]
+script = ExtResource("9_2aqoy")
+argument_name = "bool"
+metadata/_custom_type_script = "uid://4b5wbero8jbr"
