@@ -42,14 +42,16 @@ func get_command_path(tokens: Array[String], token_types: Array[CommandParser.Ar
 		var token: String = tokens[i]
 		var token_type: CommandParser.ArgumentType = token_types[i]
 		
-		var children: Array[CommandTreeNode] = []
-		current_node.get_children().filter(
-			func(node): return node is CommandTreeNode
-		).filter(children.append)
+		var children: Array[CommandTreeNode] = [] 
+		children.assign(
+			current_node.get_children().filter(
+				func(node: Node): return node is CommandTreeNode
+			)
+		)
 		
 		var found_matching_node: bool = false
 		for child in children:
-			if child.get_token_type() != token_type:
+			if not child.accepts_token_type(token_type):
 				continue
 			if not child.accepts_token(token):
 				continue
@@ -66,6 +68,16 @@ func get_command_path(tokens: Array[String], token_types: Array[CommandParser.Ar
 			# Didn't find a matching node
 			error = "Unexpected argument: %s" % token
 			return []
+		
+	var children: Array[CommandTreeNode] = []
+	current_node.get_children().filter(
+		func(node: Node): return (node is Command) or ((node is CommandTreeArgument) and not node.is_optional())
+	).filter(children.append)
+	
+	if not children.is_empty():
+		self.error = "Missing command arguments!\nExpecting one of the following:\n%s" % "\n".join(
+			children.map(node_to_string)
+		)
 		
 	return path
 	
@@ -85,9 +97,6 @@ func execute_callback(command_path: Array[CommandTreeNode], tokens: Array[String
 		argument_names.append(node.argument_name)
 		arguments.append(node.parse_token(tokens[token_index]))
 		token_index += 1
-		
-	print("Argument names: %s" % str(argument_names))
-	print("Argument values: %s" % str(arguments))
 	
 	# Find last command node
 	var inverted_command_path: Array[CommandTreeNode] = command_path.duplicate(true)

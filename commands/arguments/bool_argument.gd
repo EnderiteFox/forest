@@ -2,8 +2,8 @@ class_name BoolArgument
 extends CommandTreeArgument
 
 
-func get_token_type() -> CommandParser.ArgumentType:
-	return CommandParser.ArgumentType.BOOL
+func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
+	return token_type == CommandParser.ArgumentType.BOOL
 	
 
 func accepts_token(_token: String) -> bool:

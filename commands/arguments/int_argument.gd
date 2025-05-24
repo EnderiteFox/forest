@@ -1,8 +1,9 @@
 class_name IntArgument
 extends CommandTreeArgument
 
-func get_token_type() -> CommandParser.ArgumentType:
-	return CommandParser.ArgumentType.INT
+
+func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
+	return token_type == CommandParser.ArgumentType.INT
 	
 
 func accepts_token(token: String) -> bool:
