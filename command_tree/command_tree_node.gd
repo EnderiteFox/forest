@@ -1,6 +1,9 @@
 class_name CommandTreeNode
 extends Node
 
+## If [code]true[/code], this CommandTreeNode is optional
+@export var optional: bool = false
+
 ## Returns [code]true[/code] if this argument accepts this token type, [code]false[/code] otherwise
 func accepts_token_type(_token_type: CommandParser.ArgumentType) -> bool:
 	push_error("accepts_token_type not implemented for argument")
@@ -15,7 +18,7 @@ func accepts_token(_token: String) -> bool:
 	
 ## Returns [code]true[/code] if this node is optional, [code]false[/code] otherwise
 func is_optional() -> bool:
-	return false
+	return optional
 
 
 ## Returns [code]true[/code] if this command node is the end of a command
