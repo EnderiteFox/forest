@@ -2,6 +2,7 @@ extends TestSuite
 
 var command_tree_scene: PackedScene = preload("res://addons/forest/unit_tests/data/command_tree_test.tscn")
 var command_tree: CommandTree
+var test_commands: CommandTreeTestCommands
 
 func _init() -> void:
 	super._init("CommandTree")
@@ -9,6 +10,7 @@ func _init() -> void:
 
 func setup() -> void:
 	command_tree = command_tree_scene.instantiate()
+	test_commands = command_tree.get_node(^"CommandTreeTestCommands")
 	
 	
 func cleanup() -> void:
@@ -18,13 +20,18 @@ func cleanup() -> void:
 func assert_path_equal(command: String, expected_path: Array[StringName]) -> bool:
 	var command_parser := CommandParser.new(command)
 	command_parser.tokenize()
-	if not assert_false(command_parser.parse_error):
+	
+	if command_parser.parse_error:
+		mark_test_failed("Unexpected parse error:\n%s" % command_parser.parse_error)
 		return false
 		
 	var command_path: Array[CommandTreeNode] = command_tree.get_command_path(
 	   command_parser.tokens, 
 	   command_parser.token_types
    	)
+	
+	if command_tree.error:
+		mark_test_failed("Unexpected error:\n%s" % command_tree.error)
 	
 	return assert_eq(
 		command_path.map(
@@ -45,6 +52,30 @@ func assert_get_path_fails(command: String) -> bool:
 		command_parser.token_types
 	)
 	return assert_true(command_tree.error)
+	
+	
+func assert_execute_succeeds(command: String) -> bool:
+	var command_parser := CommandParser.new(command)
+	command_parser.tokenize()
+	if command_parser.parse_error:
+		mark_test_failed("Unexpected error:\n%s" % command_parser.parse_error)
+		return false;
+		
+	var command_path: Array[CommandTreeNode] = command_tree.get_command_path(
+		command_parser.tokens, 
+		command_parser.token_types
+	)
+	
+	if command_tree.error:
+		mark_test_failed("Unexpected error:\n%s" % command_tree.error)
+		return false
+		
+	command_tree.execute_callback(command_path, command_parser.tokens)
+	if command_tree.error:
+		mark_test_failed("Unexpected error:\n%s" % command_tree.error)
+		return false
+		
+	return true
 	
 	
 func test_get_path_empty() -> void:
@@ -117,3 +148,74 @@ func test_get_path_case_sensitive() -> void:
 	
 func test_get_path_ambiguous() -> void:
 	assert_get_path_fails("ambiguous keyword")
+	
+
+func test_get_path_optional_argument_present() -> void:
+	assert_path_equal(
+		"damage \"EnderiteFox\" 1.0 false",
+		[&"Damage", &"Player", &"Amount", &"BypassArmor"]
+	)
+	
+	
+func test_get_path_optional_argument_not_present() -> void:
+	assert_path_equal(
+		"damage \"EnderiteFox\" 1.0",
+		[&"Damage", &"Player", &"Amount"]
+	)
+	
+	
+func test_get_path_non_optional_argument_not_present() -> void:
+	assert_get_path_fails("damage \"EnderiteFox\"")
+	
+	
+func test_execute_no_args() -> void:
+	if assert_execute_succeeds("hello"):
+		assert_true(test_commands.execute_no_args)
+		
+
+func test_execute_int_arg() -> void:
+	if assert_execute_succeeds("time set 10"):
+		assert_true(test_commands.int_arg_executed)
+		assert_eq(test_commands.int_arg, 10)
+		
+		
+func test_execute_enum_arg() -> void:
+	for time_of_day in ["day", "night", "noon", "midnight"]:
+		test_commands.enum_arg_executed = false
+		test_commands.enum_arg = ""
+		if assert_execute_succeeds("time set %s" % time_of_day):
+			assert_true(test_commands.enum_arg_executed)
+			assert_eq(test_commands.enum_arg, time_of_day)
+		
+		
+func test_execute_float_arg_addition() -> void:
+	if assert_execute_succeeds("add 1.0 2.0"):
+		assert_true(test_commands.addition_executed)
+		assert_eq(test_commands.addition_result, 3.0)
+		
+	
+func test_execute_float_arg_as_int() -> void:
+	if assert_execute_succeeds("add 1 2"):
+		assert_true(test_commands.addition_executed)
+		assert_eq(test_commands.addition_result, 3.0)
+		
+		
+func test_execute_string_arg() -> void:
+	if assert_execute_succeeds("print \"Hello there\""):
+		assert_true(test_commands.string_arg_executed)
+		assert_eq(test_commands.string_arg, "Hello there")
+		
+		
+func test_execute_json_arg() -> void:
+	if assert_execute_succeeds("print {\"messages\": [{\"content\": \"Hello there\", \"sender\": \"General Kenobi\"}]}"):
+		assert_true(test_commands.json_arg_executed)
+		assert_eq(test_commands.json_arg,
+			{
+				"messages": [
+					{
+						"content": "Hello there",
+						"sender": "General Kenobi"
+					}
+				]
+			}
+		)
