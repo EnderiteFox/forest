@@ -14,3 +14,8 @@ func parse_token(token: String) -> bool:
 	if token in ['true', '1b']:
 		return true
 	return false
+	
+	
+func get_autocomplete_suggestions(partial_token: String) -> Array[String]:
+	var possible_suggestions: Array[String] = ["true", "false", "1b", "0b"]
+	return possible_suggestions.filter(func(elm: String): return elm.begins_with(partial_token))

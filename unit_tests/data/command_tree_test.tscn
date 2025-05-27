@@ -188,6 +188,36 @@ command_callbacks = Dictionary[Array, ExtResource("10_38mfq")]({
 })
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
+[node name="Similar" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "similar"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Hello" type="Node" parent="Similar"]
+script = ExtResource("2_7l7ml")
+command_name = "hello"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="HelloThere" type="Node" parent="Similar"]
+script = ExtResource("2_7l7ml")
+command_name = "hello_there"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Multiple" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "multiple"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="First" type="Node" parent="Multiple"]
+script = ExtResource("2_7l7ml")
+command_name = "first"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Second" type="Node" parent="Multiple"]
+script = ExtResource("2_7l7ml")
+command_name = "second"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
 [node name="CommandTreeTestCommands" type="Node" parent="."]
 script = ExtResource("10_rfk7s")
 metadata/_custom_type_script = "uid://dh85jsmr62ing"

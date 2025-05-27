@@ -14,3 +14,9 @@ func accepts_token(token: String) -> bool:
 	
 func parse_token(token: String) -> String:
 	return token
+	
+	
+func get_autocomplete_suggestions(partial_token: String) -> Array[String]:
+	return possible_values.filter(
+		func(enum_val: String): return enum_val.begins_with(partial_token)
+	)

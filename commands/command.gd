@@ -12,3 +12,10 @@ func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
 
 func accepts_token(token: String) -> bool:
 	return token == command_name
+	
+	
+func get_autocomplete_suggestions(partial_token: String) -> Array[String]:
+	var suggestions: Array[String] = []
+	if command_name.begins_with(partial_token):
+		suggestions.append(command_name)
+	return suggestions

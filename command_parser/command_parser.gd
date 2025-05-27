@@ -19,16 +19,19 @@ var parse_error: String = ""
 var tokens: Array[String] = []
 var token_types: Array[ArgumentType] = []
 
+var preparse_mode: bool = false
+
 
 ## Initializes the parser with a command
-func _init(command: String) -> void:
+func _init(command: String, preparse_mode: bool = false) -> void:
 	self.command = command
+	self.preparse_mode = preparse_mode
 
 
 ## Parses the command and extracts tokens.
 ## Returns [code]false[/code] if parsing fails, setting [code]parse_error[/code] to the corresponding error message,
 ## or [code]true[/code] on success
-## Tokens are stored as String in [code]tokens[/code], and types in [code]token_types[/code]
+## Tokens are stored as Strings in [code]tokens[/code], and types in [code]token_types[/code]
 func tokenize() -> bool:
 	_consume_whitespace()
 	while not _eof():
@@ -66,6 +69,8 @@ func _parse_string_arg() -> void:
 		
 	if _eof():
 		parse_error = "Unclosed string argument at column %s" % (start_index - 1)
+		if self.preparse_mode:
+			_add_token(command.substr(start_index), ArgumentType.STRING)
 		return
 		
 	if start_index == current_index:
@@ -83,6 +88,8 @@ func _parse_json_arg() -> void:
 	while nesting_level != 0:
 		if _eof():
 			parse_error = "Unclosed JSON argument at column %s" % start_index
+			if self.preparse_mode:
+				_add_token(command.substr(start_index), ArgumentType.JSON)
 			return
 		if command[current_index] == '{':
 			nesting_level += 1

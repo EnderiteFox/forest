@@ -90,6 +90,20 @@ func assert_array_size(array: Array, size: int) -> bool:
 	return true
 	
 	
+func assert_same_array(array1: Array, array2: Array) -> bool:
+	for elm in array1:
+		if elm not in array2:
+			mark_test_failed("Element %s from array %s not in %s" % [str(elm), str(array1), str(array2)])
+			return false
+	
+	for elm in array2:
+		if elm not in array1:
+			mark_test_failed("Element %s from array %s not in %s" % [str(elm), str(array2), str(array1)])
+			return false
+
+	return true
+	
+	
 func assert_string_match(string: String, pattern: String) -> bool:
 	var regex := RegEx.create_from_string(pattern)
 	if not regex.search(string):
