@@ -29,10 +29,15 @@ static func node_to_string(node: CommandTreeNode) -> String:
 
 
 ## Finds a command path matching the given tokens
-func get_command_path(tokens: Array[String], token_types: Array[CommandParser.ArgumentType]) -> Array[CommandTreeNode]:
+## Preparse mode disables some restrictions, allowing unfinished commands to be parsed
+func get_command_path(
+	tokens: Array[String], 
+	token_types: Array[CommandParser.ArgumentType], 
+	preparse_mode: bool = false
+) -> Array[CommandTreeNode]:
 	self.error = ""
 	if tokens.size() != token_types.size():
-		push_error("Internal Error: token count and token type count is different")
+		push_error("Invalid input: token count and token type count is different")
 		return []
 		
 	var path: Array[CommandTreeNode] = []
@@ -65,6 +70,9 @@ func get_command_path(tokens: Array[String], token_types: Array[CommandParser.Ar
 			found_matching_node = true
 		
 		if path.size() != i + 1:
+			if preparse_mode:
+				return path
+			
 			# Didn't find a matching node
 			error = "Unexpected argument: %s" % token
 			return []
@@ -74,7 +82,7 @@ func get_command_path(tokens: Array[String], token_types: Array[CommandParser.Ar
 		func(node: Node): return (node is Command) or ((node is CommandTreeArgument) and not node.is_optional())
 	).filter(children.append)
 	
-	if not children.is_empty():
+	if not children.is_empty() and not preparse_mode:
 		self.error = "Missing command arguments!\nExpecting one of the following:\n%s" % "\n".join(
 			children.map(node_to_string)
 		)
@@ -122,3 +130,44 @@ func execute_callback(command_path: Array[CommandTreeNode], tokens: Array[String
 		self.error = "Could not find node at path %s from node %s" % [custom_callback.node, command_node.get_name()]
 	node.callv(custom_callback.callback, arguments)
 	
+	
+func get_autocomplete_suggestions(command: String) -> Array[String]:
+	var command_parser := CommandParser.new(command, true)
+	command_parser.tokenize()
+	
+	var command_path: Array[CommandTreeNode] = self.get_command_path(
+		command_parser.tokens,
+		command_parser.token_types, 
+		true
+	)
+	
+	var ends_with_whitespace: bool = command.length() == 0 or command[-1].strip_edges().is_empty()
+	
+	var last_token: String = command_parser.tokens[-1] if command_parser.tokens.size() > 0 and not ends_with_whitespace else ""
+	
+	var last_node: Node = command_path[-1] if command_path.size() != 0 else self
+	
+	if ends_with_whitespace:
+		var suggestions: Array[String] = []
+		for child in last_node.get_children():
+			if child is CommandTreeNode:
+				suggestions.append_array(child.get_autocomplete_suggestions(""))
+		return suggestions
+	else:
+		if last_node is CommandTreeArgument:
+			return last_node.get_autocomplete_suggestions(last_token)
+		elif last_node is Command:
+			var suggestions: Array[String] = []
+			for child in last_node.get_children():
+				if child is CommandTreeNode:
+					suggestions.append_array(child.get_autocomplete_suggestions(last_token))
+			return suggestions
+		elif last_node is CommandTree:
+			var suggestions: Array[String] = []
+			for child in last_node.get_children():
+				if child is Command:
+					suggestions.append_array(child.get_autocomplete_suggestions(last_token))
+			return suggestions
+	
+	push_error("Internal Error: Unhandled case")
+	return []

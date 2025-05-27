@@ -29,3 +29,8 @@ func is_command_end() -> bool:
 	.any(\
 		func(node: CommandTreeNode): not node.is_optional()
 	)
+	
+
+## Returns autocomplete suggestions based on the current partial token
+func get_autocomplete_suggestions(partial_token: String) -> Array[String]:
+	return []

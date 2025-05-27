@@ -34,12 +34,14 @@ func run_all_tests() -> void:
 	var total_fail_count: int = 0
 	var failed_tests: Array[String] = []
 	var failed_to_get_lines: bool = false
+	var total_time: float = 0
 	for test_suite_name in test_suites:
 		test_suite_count += 1
 		var test_suite_result: Dictionary = run_test_suite(test_suite_name, test_suites[test_suite_name])
 		total_test_count += test_suite_result["total_tests"]
 		total_fail_count += test_suite_result["failed_tests"]
 		total_success_count += test_suite_result["total_tests"] - test_suite_result["failed_tests"]
+		total_time += test_suite_result["total_time"]
 		failed_tests.append_array(
 			test_suite_result["failed_test_names"].map(
 				func(test_name: String): return "%s.%s" % [test_suite_name, test_name]
@@ -49,9 +51,9 @@ func run_all_tests() -> void:
 		
 	print()
 	print_rich(
-		"Test results: [color=%s][%s] (%s / %s)[/color]" % (
-			["red", "FAILED", total_success_count, total_test_count] if total_fail_count > 0 
-			else ["green", "SUCCESS", total_success_count, total_test_count]
+		"Test results: [color=%s][%s] (%s / %s)[/color] (%s)" % (
+			["red", "FAILED", total_success_count, total_test_count, _get_time_string(total_time)] if total_fail_count > 0 
+			else ["green", "SUCCESS", total_success_count, total_test_count, _get_time_string(total_time)]
 		)
 	)
 	if total_fail_count > 0:
@@ -66,6 +68,10 @@ func run_all_tests() -> void:
 
 static func _get_test_name(method_name: String) -> String:
 	return method_name.trim_prefix("test_").capitalize().replace(" ", "")
+	
+
+static func _get_time_string(time: float) -> String:
+	return ("%.2fs" % time) if time >= 1 else ("%dms" % (time / 1000))
 
 
 static func run_test_suite(name: String, test_suite: TestSuite) -> Dictionary:
@@ -75,7 +81,8 @@ static func run_test_suite(name: String, test_suite: TestSuite) -> Dictionary:
 		"failed_tests": 0, 
 		"tests_passed": 0, 
 		"failed_test_names": [], 
-		"failed_to_get_lines": false
+		"failed_to_get_lines": false,
+		"total_time": 0
 	}
 
 	print("== %s ==" % name)
@@ -95,7 +102,14 @@ static func run_test_suite(name: String, test_suite: TestSuite) -> Dictionary:
 
 		print("Running %s.%s" % [name, test_name])
 
+		var start: float = Time.get_unix_time_from_system()
 		test_suite.callv(method_dict["name"], [])
+		var end: float = Time.get_unix_time_from_system()
+		
+		test_results["total_time"] += end - start
+		
+		var time_string: String = _get_time_string(end - start)
+		
 		test_suite.cleanup()
 
 		if test_suite.failed:
@@ -108,15 +122,27 @@ static func run_test_suite(name: String, test_suite: TestSuite) -> Dictionary:
 				else:
 					test_results["failed_to_get_lines"] = true
 					print_rich("[color=red]%s[/color]" % error["message"])
-			print_rich("[color=red][FAIL] %s.%s[/color]" % [name, test_name])
+			print_rich("[color=red][FAIL] %s.%s[/color] (%s)" % [name, test_name, time_string])
 		else:
 			test_results["tests_passed"] += 1
-			print_rich("[color=green][OK][/color]")
+			print_rich("[color=green][OK][/color] (%s)" % time_string)
 
 	print_rich(
-		"== [color=%s][%s] (%s / %s)[/color] ==" % (
-			["red", "FAILED", test_results["tests_passed"], test_results["total_tests"]] if suite_failed 
-			else ["green", "SUCCESS", test_results["tests_passed"], test_results["total_tests"]]
+		"== [color=%s][%s] (%s / %s)[/color] (%s) ==" % (
+			[
+				"red", 
+				"FAILED", 
+				test_results["tests_passed"], 
+				test_results["total_tests"], 
+				_get_time_string(test_results["total_time"])
+			] if suite_failed 
+			else [
+				"green", 
+				"SUCCESS", 
+				test_results["tests_passed"], 
+				test_results["total_tests"], 
+				_get_time_string(test_results["total_time"])
+			]
 		)
 	)
 	print()
