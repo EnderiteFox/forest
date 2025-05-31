@@ -147,27 +147,34 @@ func get_autocomplete_suggestions(command: String) -> Array[String]:
 	
 	var last_node: Node = command_path[-1] if command_path.size() != 0 else self
 	
+	return _get_node_autocompletion(last_node, last_token, ends_with_whitespace)
+	
+	
+func _get_node_autocompletion(node: Node, last_token: String, ends_with_whitespace: bool) -> Array[String]:
 	if ends_with_whitespace:
 		var suggestions: Array[String] = []
-		for child in last_node.get_children():
+		for child in node.get_children():
 			if child is CommandTreeNode:
 				suggestions.append_array(child.get_autocomplete_suggestions(""))
 		return suggestions
 	else:
-		if last_node is CommandTreeArgument:
-			return last_node.get_autocomplete_suggestions(last_token)
-		elif last_node is Command:
+		if node is CommandTreeArgument:
+			return node.get_autocomplete_suggestions(last_token)
+		elif node is Command:
+			if last_token == node.command_name and (node.get_parent() is CommandTreeNode or node.get_parent() is CommandTree):
+				return _get_node_autocompletion(node.get_parent(), last_token, false)
+				
 			var suggestions: Array[String] = []
-			for child in last_node.get_children():
+			for child in node.get_children():
 				if child is CommandTreeNode:
 					suggestions.append_array(child.get_autocomplete_suggestions(last_token))
 			return suggestions
-		elif last_node is CommandTree:
+		elif node is CommandTree:
 			var suggestions: Array[String] = []
-			for child in last_node.get_children():
+			for child in node.get_children():
 				if child is Command:
 					suggestions.append_array(child.get_autocomplete_suggestions(last_token))
 			return suggestions
-	
-	push_error("Internal Error: Unhandled case")
+		
+	push_error("Internal Error: Trying to get autocompletion from unexpected node type")
 	return []
