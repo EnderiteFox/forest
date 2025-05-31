@@ -45,3 +45,11 @@ func test_different_commands_space() -> void:
 	
 func test_enum_arg() -> void:
 	assert_same_array(command_tree.get_autocomplete_suggestions("time set "), ["day", "night", "noon", "midnight"])
+	
+	
+func test_command_end_still_shows() -> void:
+	assert_same_array(command_tree.get_autocomplete_suggestions("time"), ["time"])
+	
+	
+func test_arg_end_still_shows() -> void:
+	assert_same_array(command_tree.get_autocomplete_suggestions("time set day"), ["day"])
