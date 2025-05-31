@@ -118,3 +118,14 @@ func test_json_unclosed() -> void:
 	parser.tokenize()
 	assert_true(parser.parse_error)
 	
+	
+func test_replace_last_token() -> void:
+	assert_eq(CommandParser.replace_last_token("time set day", "night"), "time set night")
+	
+	
+func test_replace_last_token_empty() -> void:
+	assert_eq(CommandParser.replace_last_token("", "hello"), "hello")
+	
+	
+func test_replace_last_token_only_one() -> void:
+	assert_eq(CommandParser.replace_last_token("hello", "there"), "there")
