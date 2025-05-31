@@ -22,6 +22,18 @@ var token_types: Array[ArgumentType] = []
 var preparse_mode: bool = false
 
 
+## Replaces the last token with the given one. Can be used for auto-completion
+static func replace_last_token(command: String, token: String) -> String:
+	while not command.is_empty() and not _is_whitespace(command[-1]):
+		command = command.substr(0, command.length() - 1)
+	return command + token
+
+
+## Returns [code]true[/code] if the String consists of only whitespaces, [code]false[/code] otherwise
+static func _is_whitespace(string: String) -> bool:
+	return string.strip_edges().is_empty()
+
+
 ## Initializes the parser with a command
 func _init(command: String, preparse_mode: bool = false) -> void:
 	self.command = command
@@ -131,11 +143,6 @@ func _preparse_token() -> String:
 func _consume_whitespace() -> void:
 	while not _eof() and _is_whitespace(command[current_index]):
 		current_index += 1
-		
-	
-## Returns [code]true[/code] if the String consists of only whitespaces, [code]false[/code] otherwise
-func _is_whitespace(string: String) -> bool:
-	return string.strip_edges().is_empty()
 
 	
 ## Returns [code]true[/code] if the parser reached the end of the command, [code]false[/code] otherwise
