@@ -12,3 +12,10 @@ func accepts_token(_token: String) -> bool:
 	
 func parse_token(token: String) -> String:
 	return token
+	
+	
+func get_autocomplete_suggestions(partial_token: String) -> Array[String]:
+	if self.argument_name.begins_with(partial_token):
+		return [self.argument_name]
+	else:
+		return []

@@ -53,3 +53,7 @@ func test_command_end_still_shows() -> void:
 	
 func test_arg_end_still_shows() -> void:
 	assert_same_array(command_tree.get_autocomplete_suggestions("time set day"), ["day"])
+	
+	
+func test_keyword() -> void:
+	assert_same_array(command_tree.get_autocomplete_suggestions("param key"), ["keyword"])

@@ -221,3 +221,13 @@ metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 [node name="CommandTreeTestCommands" type="Node" parent="."]
 script = ExtResource("10_rfk7s")
 metadata/_custom_type_script = "uid://dh85jsmr62ing"
+
+[node name="Param" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "param"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Keyword" type="Node" parent="Param"]
+script = ExtResource("8_5v886")
+argument_name = "keyword"
+metadata/_custom_type_script = "uid://gsppnmm8soku"
