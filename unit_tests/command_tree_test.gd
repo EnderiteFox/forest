@@ -32,13 +32,17 @@ func assert_path_equal(command: String, expected_path: Array[StringName]) -> boo
 	
 	if command_tree.error:
 		mark_test_failed("Unexpected error:\n%s" % command_tree.error)
+		return false
 	
-	return assert_eq(
-		command_path.map(
-			func(node: CommandTreeNode): return node.get_name()
-		),
-		expected_path
+	var node_names: Array = command_path.map(
+		func(node: CommandTreeNode): return node.get_name()
 	)
+	
+	if node_names != expected_path:
+		mark_test_failed("Expected equality between \"%s\" and \"%s\"" % [str(node_names), str(expected_path)])
+		return false
+		
+	return true
 	
 	
 func assert_get_path_fails(command: String) -> bool:
@@ -162,6 +166,17 @@ func test_get_path_optional_argument_not_present() -> void:
 		"damage \"EnderiteFox\" 1.0",
 		[&"Damage", &"Player", &"Amount"]
 	)
+	
+	
+func test_get_path_not_ambiguous_keyword_vs_enum() -> void:
+	if assert_path_equal(
+		"ambiguous vsenum keyword",
+		[&"Ambiguous", &"VsEnum", &"Keyword"]
+	):
+		assert_path_equal(
+			"ambiguous vsenum notkeyword",
+			[&"Ambiguous", &"VsEnum", &"EnumArgument"]
+		)
 	
 	
 func test_get_path_non_optional_argument_not_present() -> void:

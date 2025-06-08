@@ -6,8 +6,8 @@ func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
 	return token_type == CommandParser.ArgumentType.KEYWORD
 	
 	
-func accepts_token(_token: String) -> bool:
-	return true
+func accepts_token(token: String) -> bool:
+	return token == self.argument_name
 	
 	
 func parse_token(token: String) -> String:
