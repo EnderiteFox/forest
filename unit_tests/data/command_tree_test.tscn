@@ -149,6 +149,21 @@ script = ExtResource("8_5v886")
 argument_name = "keyword2"
 metadata/_custom_type_script = "uid://gsppnmm8soku"
 
+[node name="VsEnum" type="Node" parent="Ambiguous"]
+script = ExtResource("2_7l7ml")
+command_name = "vsenum"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="Keyword" type="Node" parent="Ambiguous/VsEnum"]
+script = ExtResource("8_5v886")
+argument_name = "keyword"
+metadata/_custom_type_script = "uid://gsppnmm8soku"
+
+[node name="EnumArgument" type="Node" parent="Ambiguous/VsEnum"]
+script = ExtResource("4_6bbis")
+possible_values = Array[String](["notkeyword"])
+metadata/_custom_type_script = "uid://ds2t4tqqrl4g0"
+
 [node name="SetBool" type="Node" parent="."]
 script = ExtResource("2_7l7ml")
 command_name = "set_bool"
