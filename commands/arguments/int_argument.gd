@@ -6,7 +6,7 @@ func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
 	return token_type == CommandParser.ArgumentType.INT
 	
 
-func accepts_token(token: String) -> bool:
+func accepts_token(token: String, _preparse_mode: bool = false) -> bool:
 	return token.is_valid_int()
 	
 

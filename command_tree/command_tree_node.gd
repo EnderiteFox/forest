@@ -11,7 +11,7 @@ func accepts_token_type(_token_type: CommandParser.ArgumentType) -> bool:
 	
 
 ## Returns [code]true[/code] if this node accepts the given token, [code]false[/code] otherwise
-func accepts_token(_token: String) -> bool:
+func accepts_token(_token: String, _preparse_mode: bool = false) -> bool:
 	push_error("accepts_token not implemented for argument")
 	return false
 	

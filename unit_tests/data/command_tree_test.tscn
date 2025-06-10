@@ -246,3 +246,19 @@ metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 script = ExtResource("8_5v886")
 argument_name = "keyword"
 metadata/_custom_type_script = "uid://gsppnmm8soku"
+
+[node name="Spawn" type="Node" parent="."]
+script = ExtResource("2_7l7ml")
+command_name = "spawn"
+metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
+
+[node name="TheShade" type="Node" parent="Spawn"]
+script = ExtResource("8_5v886")
+argument_name = "the_shade"
+metadata/_custom_type_script = "uid://gsppnmm8soku"
+
+[node name="Where" type="Node" parent="Spawn/TheShade"]
+script = ExtResource("4_6bbis")
+possible_values = Array[String](["last", "random"])
+argument_name = "where"
+metadata/_custom_type_script = "uid://ds2t4tqqrl4g0"
