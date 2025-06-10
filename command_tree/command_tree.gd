@@ -58,10 +58,12 @@ func get_command_path(
 		for child in children:
 			if not child.accepts_token_type(token_type):
 				continue
-			if not child.accepts_token(token):
+			if not child.accepts_token(token, preparse_mode):
 				continue
 			
 			if found_matching_node:
+				if preparse_mode:
+					return path
 				error = "Ambiguous command tree: token %s matches both %s and %s" % [token, node_to_string(path[-1]), node_to_string(child)]
 				return []
 			
@@ -161,7 +163,7 @@ func _get_node_autocompletion(node: Node, last_token: String, ends_with_whitespa
 		if node is CommandTreeArgument:
 			return node.get_autocomplete_suggestions(last_token)
 		elif node is Command:
-			if last_token == node.command_name and (node.get_parent() is CommandTreeNode or node.get_parent() is CommandTree):
+			if node.command_name.begins_with(last_token) and (node.get_parent() is CommandTreeNode or node.get_parent() is CommandTree):
 				return _get_node_autocompletion(node.get_parent(), last_token, false)
 				
 			var suggestions: Array[String] = []

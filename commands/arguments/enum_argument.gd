@@ -8,7 +8,9 @@ func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
 	return token_type == CommandParser.ArgumentType.KEYWORD
 	
 	
-func accepts_token(token: String) -> bool:
+func accepts_token(token: String, preparse_mode: bool = false) -> bool:
+	if preparse_mode:
+		return possible_values.any(func(enum_val: String): return enum_val.begins_with(token))
 	return token in possible_values
 	
 	

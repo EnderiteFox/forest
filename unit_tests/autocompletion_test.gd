@@ -47,6 +47,10 @@ func test_enum_arg() -> void:
 	assert_same_array(command_tree.get_autocomplete_suggestions("time set "), ["day", "night", "noon", "midnight"])
 	
 	
+func test_enum_arg_partial() -> void:
+	assert_same_array(command_tree.get_autocomplete_suggestions("time set n"), ["night", "noon"])
+	
+	
 func test_command_end_still_shows() -> void:
 	assert_same_array(command_tree.get_autocomplete_suggestions("time"), ["time"])
 	
@@ -57,3 +61,7 @@ func test_arg_end_still_shows() -> void:
 	
 func test_keyword() -> void:
 	assert_same_array(command_tree.get_autocomplete_suggestions("param key"), ["keyword"])
+	
+	
+func test_after_keyword() -> void:
+	assert_same_array(command_tree.get_autocomplete_suggestions("spawn the_shade r"), ["random"])

@@ -10,7 +10,7 @@ func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
 		accepts_ints and token_type == CommandParser.ArgumentType.INT
 	)
 	
-func accepts_token(token: String) -> bool:
+func accepts_token(token: String, _preparse_mode: bool = false) -> bool:
 	return token.is_valid_float()
 	
 	
