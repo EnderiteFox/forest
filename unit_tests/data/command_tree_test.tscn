@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bajd8kfcs203a"]
+[gd_scene load_steps=11 format=3 uid="uid://bajd8kfcs203a"]
 
 [ext_resource type="Script" uid="uid://dqwdxxtw4ef1k" path="res://addons/forest/command_tree/command_tree.gd" id="1_ofntp"]
 [ext_resource type="Script" uid="uid://cehwf7xbnc5c3" path="res://addons/forest/commands/command.gd" id="2_7l7ml"]
@@ -9,44 +9,7 @@
 [ext_resource type="Script" uid="uid://dq5heemyyybie" path="res://addons/forest/commands/arguments/json_argument.gd" id="7_5v886"]
 [ext_resource type="Script" uid="uid://gsppnmm8soku" path="res://addons/forest/commands/arguments/keyword_argument.gd" id="8_5v886"]
 [ext_resource type="Script" uid="uid://4b5wbero8jbr" path="res://addons/forest/commands/arguments/bool_argument.gd" id="9_2aqoy"]
-[ext_resource type="Script" uid="uid://dx6u3arc60cx7" path="res://addons/forest/resource/custom_callback.gd" id="10_38mfq"]
 [ext_resource type="Script" uid="uid://dh85jsmr62ing" path="res://addons/forest/unit_tests/data/command_tree_test_commands.gd" id="10_rfk7s"]
-
-[sub_resource type="Resource" id="Resource_38mfq"]
-script = ExtResource("10_38mfq")
-node = NodePath("../../CommandTreeTestCommands")
-callback = &"validate_execute_int_arg"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
-
-[sub_resource type="Resource" id="Resource_px2ym"]
-script = ExtResource("10_38mfq")
-node = NodePath("../../CommandTreeTestCommands")
-callback = &"validate_execute_enum_arg"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
-
-[sub_resource type="Resource" id="Resource_buhdw"]
-script = ExtResource("10_38mfq")
-node = NodePath("../CommandTreeTestCommands")
-callback = &"validate_addition"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
-
-[sub_resource type="Resource" id="Resource_imo3n"]
-script = ExtResource("10_38mfq")
-node = NodePath("../CommandTreeTestCommands")
-callback = &"validate_json_arg"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
-
-[sub_resource type="Resource" id="Resource_4e3qo"]
-script = ExtResource("10_38mfq")
-node = NodePath("../CommandTreeTestCommands")
-callback = &"validate_string_arg"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
-
-[sub_resource type="Resource" id="Resource_ttd17"]
-script = ExtResource("10_38mfq")
-node = NodePath("../CommandTreeTestCommands")
-callback = &"validate_execute_no_args"
-metadata/_custom_type_script = "uid://dx6u3arc60cx7"
 
 [node name="Root" type="Node"]
 script = ExtResource("1_ofntp")
@@ -80,10 +43,6 @@ metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 [node name="Set" type="Node" parent="Time"]
 script = ExtResource("2_7l7ml")
 command_name = "set"
-command_callbacks = Dictionary[Array, ExtResource("10_38mfq")]({
-["time_in_ticks"]: SubResource("Resource_38mfq"),
-["time_of_day"]: SubResource("Resource_px2ym")
-})
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
 [node name="TimeInTicks" type="Node" parent="Time/Set"]
@@ -100,9 +59,6 @@ metadata/_custom_type_script = "uid://ds2t4tqqrl4g0"
 [node name="Add" type="Node" parent="."]
 script = ExtResource("2_7l7ml")
 command_name = "add"
-command_callbacks = Dictionary[Array, ExtResource("10_38mfq")]({
-["num1", "num2"]: SubResource("Resource_buhdw")
-})
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
 [node name="Num1" type="Node" parent="Add"]
@@ -118,10 +74,6 @@ metadata/_custom_type_script = "uid://8o4qdelg1657"
 [node name="Print" type="Node" parent="."]
 script = ExtResource("2_7l7ml")
 command_name = "print"
-command_callbacks = Dictionary[Array, ExtResource("10_38mfq")]({
-["json"]: SubResource("Resource_imo3n"),
-["text"]: SubResource("Resource_4e3qo")
-})
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
 [node name="Text" type="Node" parent="Print"]
@@ -198,9 +150,6 @@ metadata/_custom_type_script = "uid://4b5wbero8jbr"
 [node name="Hello" type="Node" parent="."]
 script = ExtResource("2_7l7ml")
 command_name = "hello"
-command_callbacks = Dictionary[Array, ExtResource("10_38mfq")]({
-[]: SubResource("Resource_ttd17")
-})
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
 [node name="Similar" type="Node" parent="."]
@@ -233,10 +182,6 @@ script = ExtResource("2_7l7ml")
 command_name = "second"
 metadata/_custom_type_script = "uid://cehwf7xbnc5c3"
 
-[node name="CommandTreeTestCommands" type="Node" parent="."]
-script = ExtResource("10_rfk7s")
-metadata/_custom_type_script = "uid://dh85jsmr62ing"
-
 [node name="Param" type="Node" parent="."]
 script = ExtResource("2_7l7ml")
 command_name = "param"
@@ -262,3 +207,7 @@ script = ExtResource("4_6bbis")
 possible_values = Array[String](["last", "random"])
 argument_name = "where"
 metadata/_custom_type_script = "uid://ds2t4tqqrl4g0"
+
+[node name="CommandTreeTestCommands" type="Node" parent="."]
+script = ExtResource("10_rfk7s")
+metadata/_custom_type_script = "uid://dh85jsmr62ing"

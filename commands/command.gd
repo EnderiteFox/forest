@@ -3,7 +3,7 @@ extends CommandTreeNode
 
 @export var command_name: String
 
-@export var command_callbacks: Dictionary[Array, CustomCallback] = {}
+var command_callbacks: Dictionary[Array, Callable] = {}
 
 
 func accepts_token_type(token_type: CommandParser.ArgumentType) -> bool:
