@@ -126,11 +126,7 @@ func execute_callback(command_path: Array[CommandTreeNode], tokens: Array[String
 		self.error = "No function matches arguments %s" % ", ".join(argument_names)
 		return
 
-	var custom_callback: CustomCallback = command_node.command_callbacks[argument_names]
-	var node: Node = command_node.get_node(custom_callback.node)
-	if not node:
-		self.error = "Could not find node at path %s from node %s" % [custom_callback.node, command_node.get_name()]
-	node.callv(custom_callback.callback, arguments)
+	command_node.command_callbacks[argument_names].callv(arguments)
 	
 	
 func get_autocomplete_suggestions(command: String) -> Array[String]:
@@ -180,3 +176,27 @@ func _get_node_autocompletion(node: Node, last_token: String, ends_with_whitespa
 		
 	push_error("Internal Error: Trying to get autocompletion from unexpected node type")
 	return []
+	
+
+func register_callable(command: Array[String], arguments: Array[String], callable: Callable) -> bool:
+	self.error = ""
+	
+	var tokens: Array[CommandParser.ArgumentType] = []
+	for i in range(command.size()):
+			tokens.append(CommandParser.ArgumentType.KEYWORD)
+	
+	var command_path: Array[CommandTreeNode] = get_command_path(command, tokens, true)
+	if error:
+		return false
+	
+	if command_path.size() == 0:
+		self.error = "Command %s has an empty command tree" % " ".join(command)
+		return false
+		
+	var last_node: CommandTreeNode = command_path[-1]
+	if last_node is Command:
+		last_node.command_callbacks[arguments] = callable
+		return true
+	else:
+		self.error = "Last node of command %s is not of Command type" % " ".join(command)
+		return false

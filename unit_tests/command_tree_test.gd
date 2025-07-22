@@ -184,53 +184,95 @@ func test_get_path_non_optional_argument_not_present() -> void:
 	
 	
 func test_execute_no_args() -> void:
-	if assert_execute_succeeds("hello"):
-		assert_true(test_commands.execute_no_args)
+	command_tree.register_callable(
+		["hello"],
+		[],
+		test_commands.validate_execute_no_args
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("hello"):
+			assert_true(test_commands.execute_no_args)
 		
 
 func test_execute_int_arg() -> void:
-	if assert_execute_succeeds("time set 10"):
-		assert_true(test_commands.int_arg_executed)
-		assert_eq(test_commands.int_arg, 10)
+	command_tree.register_callable(
+		["time", "set"], 
+		["time_in_ticks"], 
+		test_commands.validate_execute_int_arg
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("time set 10"):
+			assert_true(test_commands.int_arg_executed)
+			assert_eq(test_commands.int_arg, 10)
 		
 		
 func test_execute_enum_arg() -> void:
 	for time_of_day in ["day", "night", "noon", "midnight"]:
 		test_commands.enum_arg_executed = false
 		test_commands.enum_arg = ""
-		if assert_execute_succeeds("time set %s" % time_of_day):
-			assert_true(test_commands.enum_arg_executed)
-			assert_eq(test_commands.enum_arg, time_of_day)
+		command_tree.register_callable(
+			["time", "set"],
+			["time_of_day"],
+			test_commands.validate_execute_enum_arg
+		)
+		if assert_false(command_tree.error):
+			if assert_execute_succeeds("time set %s" % time_of_day):
+				assert_true(test_commands.enum_arg_executed)
+				assert_eq(test_commands.enum_arg, time_of_day)
 		
 		
 func test_execute_float_arg_addition() -> void:
-	if assert_execute_succeeds("add 1.0 2.0"):
-		assert_true(test_commands.addition_executed)
-		assert_eq(test_commands.addition_result, 3.0)
+	command_tree.register_callable(
+		["add"],
+		["num1", "num2"],
+		test_commands.validate_addition
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("add 1.0 2.0"):
+			assert_true(test_commands.addition_executed)
+			assert_eq(test_commands.addition_result, 3.0)
 		
 	
 func test_execute_float_arg_as_int() -> void:
-	if assert_execute_succeeds("add 1 2"):
-		assert_true(test_commands.addition_executed)
-		assert_eq(test_commands.addition_result, 3.0)
+	command_tree.register_callable(
+		["add"],
+		["num1", "num2"],
+		test_commands.validate_addition
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("add 1 2"):
+			assert_true(test_commands.addition_executed)
+			assert_eq(test_commands.addition_result, 3.0)
 		
 		
 func test_execute_string_arg() -> void:
-	if assert_execute_succeeds("print \"Hello there\""):
-		assert_true(test_commands.string_arg_executed)
-		assert_eq(test_commands.string_arg, "Hello there")
+	command_tree.register_callable(
+		["print"],
+		["text"],
+		test_commands.validate_string_arg
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("print \"Hello there\""):
+			assert_true(test_commands.string_arg_executed)
+			assert_eq(test_commands.string_arg, "Hello there")
 		
 		
 func test_execute_json_arg() -> void:
-	if assert_execute_succeeds("print {\"messages\": [{\"content\": \"Hello there\", \"sender\": \"General Kenobi\"}]}"):
-		assert_true(test_commands.json_arg_executed)
-		assert_eq(test_commands.json_arg,
-			{
-				"messages": [
-					{
-						"content": "Hello there",
-						"sender": "General Kenobi"
-					}
-				]
-			}
-		)
+	command_tree.register_callable(
+		["print"],
+		["json"],
+		test_commands.validate_json_arg
+	)
+	if assert_false(command_tree.error):
+		if assert_execute_succeeds("print {\"messages\": [{\"content\": \"Hello there\", \"sender\": \"General Kenobi\"}]}"):
+			assert_true(test_commands.json_arg_executed)
+			assert_eq(test_commands.json_arg,
+				{
+					"messages": [
+						{
+							"content": "Hello there",
+							"sender": "General Kenobi"
+						}
+					]
+				}
+			)
